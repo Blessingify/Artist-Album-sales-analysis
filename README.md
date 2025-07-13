@@ -45,3 +45,50 @@ FROM CUSTOMER
 GROUP BY COUNTRY 
 ORDER BY TOTAL DESC
 ````
+Top get 5 Customers who Have Spent the Most on purchases, the query below was used:
+````sql
+WITH highest as
+(select firstname || '  ' || lastname name, round(sum(unitprice * quantity),0) top_purchase 
+from customer c
+left join invoice I
+on c.customerid = i.customerid
+join invoiceline iv
+on i.InvoiceId = iv.InvoiceId
+group by name)
+
+
+select * from highest 
+order by top_purchase desc
+limit 5
+````
+Query that retrieves the following, total orders, the total sum spend,
+minimum, maximum, and average spend on an order?
+````SQL
+With TotalOrderSpend AS (                                                  			
+Select 			
+  InvoiceId,                                                                                 		
+  Sum(UnitPrice * Quantity) As TotalInvoice                             		
+  From InvoiceLine			
+  Group By InvoiceId                                                                                     
+  )			
+  Select 			
+  Count(Invoice.InvoiceId) As Total_Orders,                                                    		
+  Round(Sum(TotalOrderSpend.TotalInvoice),2) As Total_Sum_Spend,          			
+  Round(Min(TotalOrderSpend.TotalInvoice),2) As Min_Sum_Spend,            			
+  Round(Max(TotalOrderSpend.TotalInvoice),2) AS Max_Sum_Spend,           
+  Round(Avg(TotalOrderSpend.TotalInvoice),2) As Avg_Sum_Spend
+From Invoice 			
+Join TotalOrderSpend on Invoice.InvoiceId = TotalOrderSpend.InvoiceId  
+````
+
+The total number of tracks available on each genre?
+````SQL
+WITH TOTAL_TRACK AS
+(SELECT TRACKID, COUNT(*) COUNT, GENREID, NAME, COMPOSER 
+FROM TRACK
+GROUP BY NAME)
+
+SELECT *
+FROM TOTAL_TRACK 
+ORDER BY COUNT DESC
+````
