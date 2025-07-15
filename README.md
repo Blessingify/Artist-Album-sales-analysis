@@ -17,20 +17,30 @@ With the growing digitization of music, understanding consumer preferences and s
 - Evaluate the genre spread and track volume.
 - Provide business recommendation to optimize marketing, promotions and investments.
 
+<img width="1374" height="699" alt="Dashboard 1-4" src="https://github.com/user-attachments/assets/3860cf73-cf2a-4519-b99f-27b2dbf7c9cd" />
+
+
+
 ### TOOLS USED
 - SQLLITE
+- Tableau
 
-To find all artist and their album, the subquery below was excuted:
+
+
+  ### Data Exploratory Data Analyst
+  It includes some intresting code used in answering the questions.
+
+1. To find all artist and their album, the subquery below was excuted:
 ````sql
 select *,(select name from artist) Artist from album
 ````
-To merge the First and Last name together and also retrive more information my each customer:
+2. To merge the First and Last name together and also retrive more information my each customer:
 ````sql
 select firstname || '  ' || lastname Name, email, country, country 
 from customer
 ````
 
-To retrive all information of customers in only USA, LIMIT TO 10:
+3. To retrive all information of customers in only USA, LIMIT TO 10:
 ````SQL
 SELECT * FROM CUSTOMER
 WHERE COUNTRY IN (select country from customer
@@ -38,14 +48,14 @@ where country = 'USA')
 ORDER BY FIRSTNAME DESC, LASTNAME ASC
 LIMIT 10
 ````
-To find the total number of customer in each country:
+4. To find the total number of customer in each country:
 ````sql
 SELECT COUNTRY, COUNT(*)TOTAL
 FROM CUSTOMER
 GROUP BY COUNTRY 
 ORDER BY TOTAL DESC
 ````
-Top get 5 Customers who Have Spent the Most on purchases, the query below was used:
+5. Top get 5 Customers who Have Spent the Most on purchases, the query below was used:
 ````sql
 WITH highest as
 (select firstname || '  ' || lastname name, round(sum(unitprice * quantity),0) top_purchase 
@@ -61,7 +71,7 @@ select * from highest
 order by top_purchase desc
 limit 5
 ````
-Query that retrieves the following, total orders, the total sum spend,
+6. Query that retrieves the following, total orders, the total sum spend,
 minimum, maximum, and average spend on an order?
 ````SQL
 With TotalOrderSpend AS (                                                  			
@@ -81,7 +91,7 @@ From Invoice
 Join TotalOrderSpend on Invoice.InvoiceId = TotalOrderSpend.InvoiceId  
 ````
 
-The total number of tracks available on each genre?
+7. The total number of tracks available on each genre?
 ````SQL
 WITH TOTAL_TRACK AS
 (SELECT TRACKID, COUNT(*) COUNT, GENREID, NAME, COMPOSER 
@@ -92,3 +102,33 @@ SELECT *
 FROM TOTAL_TRACK 
 ORDER BY COUNT DESC
 ````
+8. Get information of invoices billed to the following European countries: in
+Italy, Belgium, France, Sweden, Denmark, with their total revenue for each country
+````SQL
+select country, total, round(sum(unitprice * quantity), 0) total_revenue
+from customer c
+join invoice I 
+on c.CustomerId = i.CustomerId 
+join invoiceline iv 
+on i.InvoiceId = iv.InvoiceId
+where country in ('Italy', 'Belgium', 'France', 'Sweden', 'Denmark')
+group by country
+order by total_revenue desc
+````
+
+##Findings
+- Invoice billed to belgium should be reviewed as it is higher than the other countries which is likely affecting its total revenue genarated.
+- France Had the highest revenue of £195
+- 'Tv show' had  the most tracks under genre.
+
+  
+## Recommendation
+
+- Provide loyalty rewards to top-spending customers to enhance retention.
+- Market high-performing tracks and albums through focused playlists or promotional campaigns.
+- Increase distribution in significant markets, particularly in Europe and North America, where sales are robust.
+- Leverage genre trends to inform future artist recruitment and marketing strategies.
+- To enhance the analysis, we can incorporate time-based data (such as monthly sales figures) and monitor changes over time.
+
+
+🙂
